@@ -30,8 +30,34 @@ var border = svg.append("rect")
     .style("fill", "none")
     .style("stroke-width", 2);
 
-var coordStore = randomCoords(numEnemies);
 
+var player = svg.selectAll("circle.player")
+   .data([[1,1]])
+   .enter()
+   .append("circle")
+   .attr("cx", function(d) {
+        return Math.floor((width) * Math.random());
+   })
+   .attr("cy", function(d) {
+        return Math.floor((height) * Math.random());
+   })
+   .attr("r", 40)
+   .style("fill", "red")
+   .attr("class", "player");
+
+svg.selectAll("circle.player")
+.on("drag", function(){
+  console.log("callback working")
+});
+
+var drag = d3.behavior.drag()
+.on('drag', function() {
+  console.log(d3.event.dx + ',' + d3.event.dy);
+  movePlayer(d3.event.dx,d3.event.dy);
+});
+player.call(drag);
+
+var coordStore = randomCoords(numEnemies);
 var enemies = svg.selectAll("circle")
    .data(coordStore)
    .enter()
@@ -42,13 +68,21 @@ var enemies = svg.selectAll("circle")
    .attr("cy", function(d) {
         return d[1];
    })
-   .attr("r", 10);
+   .attr("r", 10)
+   .attr("class", "enemy");
 
+
+
+var movePlayer = function(dx, dy) {
+  player
+  .attr("cx", function(d){return parseFloat(player.attr("cx")) + dx })
+  .attr("cy", function(d){return parseFloat(player.attr("cy")) + dy })
+}
 
 var update = function(dataset){
   // var newCoords = randomCoords(numEnemies)
-  svg.selectAll("circle")
-   .transition()
+  //svg.selectAll("circle.enemy")
+   enemies.transition()
      .duration(2000)
      .attr("cx", function() {
       return Math.floor((width) * Math.random());
