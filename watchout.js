@@ -4,6 +4,7 @@
 var width = 960;
 var height = 500;
 var numEnemies = 20;
+var radius = 10
 
 var randomCoords = function(n) {
   var coords = [];
@@ -30,6 +31,7 @@ var border = svg.append("rect")
     .style("fill", "none")
     .style("stroke-width", 2);
 
+var collisions = d3.selectAll("div.collisions span");
 
 var player = svg.selectAll("circle.player")
    .data([[1,1]])
@@ -41,21 +43,48 @@ var player = svg.selectAll("circle.player")
    .attr("cy", function(d) {
         return Math.floor((height) * Math.random());
    })
-   .attr("r", 40)
+   .attr("r", radius)
    .style("fill", "red")
    .attr("class", "player");
 
 svg.selectAll("circle.player")
 .on("drag", function(){
-  console.log("callback working")
 });
 
 var drag = d3.behavior.drag()
 .on('drag', function() {
-  console.log(d3.event.dx + ',' + d3.event.dy);
   movePlayer(d3.event.dx,d3.event.dy);
 });
 player.call(drag);
+
+player.on('tick', function() {
+  console.log('ticking');
+});
+
+var incrementCollision = _.throttle(function() {
+  collisions.text(parseFloat(parseFloat(collisions.text()) + 1));
+},500);
+
+setInterval(function() {
+
+  var pX = parseFloat(player.attr("cx"))
+  var pY = parseFloat(player.attr("cy"))
+  var nodes = svg.selectAll("circle.enemy")
+  nodes.each(function(d, i){
+
+    var nY = parseFloat(this.getAttribute("cy"))
+    var nX = parseFloat(this.getAttribute("cx"))
+    if(Math.abs(nX - pX) <= 2*radius
+      && Math.abs(nY - pY) <= 2*radius) {
+      incrementCollision();
+    }
+  })
+  //  console.log(nodes[i].cx)
+  //   var nY = nodes[i].attributes[1].value
+  //   console.log(nX)
+
+  // }
+},100);
 
 var coordStore = randomCoords(numEnemies);
 var enemies = svg.selectAll("circle")
@@ -68,9 +97,8 @@ var enemies = svg.selectAll("circle")
    .attr("cy", function(d) {
         return d[1];
    })
-   .attr("r", 10)
+   .attr("r", radius)
    .attr("class", "enemy");
-
 
 
 var movePlayer = function(dx, dy) {
@@ -79,7 +107,7 @@ var movePlayer = function(dx, dy) {
   .attr("cy", function(d){return parseFloat(player.attr("cy")) + dy })
 }
 
-var update = function(dataset){
+var update = function(){
   // var newCoords = randomCoords(numEnemies)
   //svg.selectAll("circle.enemy")
    enemies.transition()
