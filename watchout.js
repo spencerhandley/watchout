@@ -3,7 +3,7 @@
 
 var width = 960;
 var height = 500;
-var numEnemies = 20;
+var numEnemies = 80;
 var radius = 10
 
 var randomCoords = function(n) {
@@ -30,8 +30,6 @@ var border = svg.append("rect")
     .style("stroke", "black")
     .style("fill", "none")
     .style("stroke-width", 2);
-
-var collisions = d3.selectAll("div.collisions span");
 
 var player = svg.selectAll("circle.player")
    .data([[1,1]])
@@ -61,9 +59,28 @@ player.on('tick', function() {
   console.log('ticking');
 });
 
+var collisions = d3.selectAll("div.collisions span");
+var highScore = d3.selectAll("div.high span");
+var currentScore = d3.selectAll("div.current span");
+
 var incrementCollision = _.throttle(function() {
   collisions.text(parseFloat(parseFloat(collisions.text()) + 1));
 },500);
+
+var updateHighScore = function() {
+  var high = parseInt(highScore.text());
+  var current = parseInt(currentScore.text());
+  if (current > high) {
+    highScore.text(current);
+  }
+};
+
+var resetCurrentScore = function() {
+  currentScore.text("0");
+};
+var updateCurrentScore = function() {
+  currentScore.text(parseInt(currentScore.text()) + 10);
+}
 
 setInterval(function() {
 
@@ -77,13 +94,13 @@ setInterval(function() {
     if(Math.abs(nX - pX) <= 2*radius
       && Math.abs(nY - pY) <= 2*radius) {
       incrementCollision();
+      resetCurrentScore();
     }
   })
-  //  console.log(nodes[i].cx)
-  //   var nY = nodes[i].attributes[1].value
-  //   console.log(nX)
+  updateCurrentScore();
+  updateHighScore();
 
-  // }
+
 },100);
 
 var coordStore = randomCoords(numEnemies);
