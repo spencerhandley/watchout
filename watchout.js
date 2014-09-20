@@ -3,7 +3,7 @@
 
 var width = 960;
 var height = 500;
-var numEnemies = 80;
+var numEnemies = 20;
 var radius = 10
 
 var randomCoords = function(n) {
@@ -28,7 +28,7 @@ var border = svg.append("rect")
     .attr("height", height)
     .attr("width", width)
     .style("stroke", "black")
-    .style("fill", "none")
+    .style("fill", "black")
     .style("stroke-width", 2);
 
 var player = svg.selectAll("circle.player")
@@ -115,7 +115,9 @@ var enemies = svg.selectAll("circle")
         return d[1];
    })
    .attr("r", radius)
-   .attr("class", "enemy");
+   .attr("class", "enemy")
+   .style("fill", "white")
+
 
 
 var movePlayer = function(dx, dy) {
@@ -123,7 +125,7 @@ var movePlayer = function(dx, dy) {
   .attr("cx", function(d){return parseFloat(player.attr("cx")) + dx })
   .attr("cy", function(d){return parseFloat(player.attr("cy")) + dy })
 }
-
+var colors = ["blue", "yellow", "red", "purple", "pink", "orange" ]
 var update = function(){
   // var newCoords = randomCoords(numEnemies)
   //svg.selectAll("circle.enemy")
@@ -135,7 +137,8 @@ var update = function(){
      .attr("cy", function() {
       return Math.floor((height) * Math.random());
      })
-     .ease()
+     .style("fill", colors[Math.floor(Math.random() * colors.length)])
+     .ease("elastic")
 
 
   //create new coordinates
