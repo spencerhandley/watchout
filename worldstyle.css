@@ -1,0 +1,26 @@
+/* your beautiful css styling goes here! */
+
+/* Note: an asteroid image is included in this repo.
+Feel free to use it if you like. */
+body {
+  background-color: black;
+}
+.title {
+  font-family: sans-serif;
+  color: white;
+  text-align: center;
+}
+#container {
+  height: 700px;
+  width: 1000px;
+  margin: 0 auto;
+  padding-top:50px;
+  background-color: black;
+  position: relative;
+
+}
+
+.enemy {
+  border-radius: 100%;
+  background-color: white;
+}
